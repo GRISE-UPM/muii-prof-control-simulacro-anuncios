@@ -17,10 +17,10 @@ if [ ! -f "$KEY_PATH" ]; then
     exit 1
 fi
 
-# TODO: Copia aquí, a mano, la IP pública de la instancia y, desde params.txt, el nombre del secreto y el EXAM_ID.
-PUBLIC_IP=<ip publica>
-SECRET_NAME=<nombre del secreto>
-EXAM_ID=<EXAM_ID>
+# Copia aquí, a mano, la IP pública de la instancia y, desde params.txt, el nombre del secreto y el EXAM_ID.
+PUBLIC_IP="100.61.233.197"
+SECRET_NAME="prod/anuncios/837194"
+EXAM_ID="837194"
 
 BACKEND_PATH="$PROJECT_ROOT/back"
 
