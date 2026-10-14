@@ -17,8 +17,9 @@ if [ ! -f "$KEY_PATH" ]; then
     exit 1
 fi
 
-# TODO: Copia aquí, a mano, la IP pública de la instancia.
-PUBLIC_IP=<ip publica>
+
+# Copia aquí, a mano, la IP pública de la instancia.
+PUBLIC_IP="100.61.233.197"
 
 echo "Configurando Nginx en $PUBLIC_IP..."
 
