@@ -1,4 +1,4 @@
 # EXAM_ID lo escribe bash params.sh. Escribe tú a mano la IP.
 # IP      Indica la IP pública de la instancia.
 EXAM_ID=220156
-IP=100.61.32.43
+IP=34.194.243.71
