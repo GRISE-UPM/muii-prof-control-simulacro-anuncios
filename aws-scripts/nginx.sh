@@ -18,8 +18,7 @@ if [ ! -f "$KEY_PATH" ]; then
 fi
 
 # TODO: Copia aquí, a mano, la IP pública de la instancia.
-PUBLIC_IP=<ip publica>
-
+PUBLIC_IP="44.194.144.44"
 echo "Configurando Nginx en $PUBLIC_IP..."
 
 # -T: sin pseudo-terminal, para que no avise al leer el script por stdin
