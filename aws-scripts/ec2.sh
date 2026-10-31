@@ -44,7 +44,7 @@ echo "listo."
 echo -n "Creando regla de acceso (ssh)... "
 # TODO: Permite SSH (puerto 22) solo desde la IP pública de la máquina desde la que despliegas (los scripts usan ssh y scp), con CIDR /32.
 # Pista: https://checkip.amazonaws.com devuelve tu IP pública.
-MY_IP=<tu ip publica>
+STUDENT_IP=<tu ip publica>
 aws ec2 authorize-security-group-ingress \
     --group-id "$SG_ID" \
     --protocol tcp \

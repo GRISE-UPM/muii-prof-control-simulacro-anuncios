@@ -18,7 +18,7 @@ if [ ! -f "$KEY_PATH" ]; then
 fi
 
 # TODO: Copia aquí, a mano, la IP pública de la instancia y, desde params.txt, el nombre del secreto y el EXAM_ID.
-PUBLIC_IP=<ip publica>
+INSTANCE_IP=<ip de la instancia>
 SECRET_NAME=<nombre del secreto>
 EXAM_ID=<EXAM_ID>
 
@@ -33,14 +33,14 @@ if [ -z "$BACKEND_JAR" ]; then
     exit 1
 fi
 
-echo -n "Subiendo el back a $PUBLIC_IP... "
-scp -q -o StrictHostKeyChecking=no -i "$KEY_PATH" "$BACKEND_JAR" ubuntu@"$PUBLIC_IP":/tmp/anuncios.jar
+echo -n "Subiendo el back a $INSTANCE_IP... "
+scp -q -o StrictHostKeyChecking=no -i "$KEY_PATH" "$BACKEND_JAR" ubuntu@"$INSTANCE_IP":/tmp/anuncios.jar
 echo "listo."
 
 echo "Configurando el servicio en la instancia EC2..."
 
 # SECRET_NAME y EXAM_ID viajan como variables de entorno del servicio: no van en el JAR.
-ssh -T -o StrictHostKeyChecking=no -i "$KEY_PATH" ubuntu@"$PUBLIC_IP" \
+ssh -T -o StrictHostKeyChecking=no -i "$KEY_PATH" ubuntu@"$INSTANCE_IP" \
     "SECRET_NAME='$SECRET_NAME' EXAM_ID='$EXAM_ID' bash -s" << 'END_BACKEND'
 set -e
 sudo apt-get update -y
@@ -82,4 +82,4 @@ sudo systemctl restart anuncios
 END_BACKEND
 
 echo "Despliegue del back finalizado. Tarda unos segundos en arrancar. Comprobación:"
-echo "  http://$PUBLIC_IP/api/whoami"
+echo "  http://$INSTANCE_IP/api/whoami"

@@ -18,12 +18,12 @@ if [ ! -f "$KEY_PATH" ]; then
 fi
 
 # TODO: Copia aquí, a mano, la IP pública de la instancia.
-PUBLIC_IP=<ip publica>
+INSTANCE_IP=<ip de la instancia>
 
-echo "Configurando Nginx en $PUBLIC_IP..."
+echo "Configurando Nginx en $INSTANCE_IP..."
 
 # -T: sin pseudo-terminal, para que no avise al leer el script por stdin
-ssh -T -o StrictHostKeyChecking=no -i "$KEY_PATH" ubuntu@"$PUBLIC_IP" bash -s << 'END_NGINX'
+ssh -T -o StrictHostKeyChecking=no -i "$KEY_PATH" ubuntu@"$INSTANCE_IP" bash -s << 'END_NGINX'
 set -e
 sudo apt-get update -y
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nginx

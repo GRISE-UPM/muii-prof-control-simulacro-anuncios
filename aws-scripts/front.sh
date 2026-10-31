@@ -18,15 +18,15 @@ if [ ! -f "$KEY_PATH" ]; then
 fi
 
 # TODO: Copia aquí, a mano, la IP pública de la instancia.
-PUBLIC_IP=<ip publica>
+INSTANCE_IP=<ip de la instancia>
 
 FRONT_PATH="$PROJECT_ROOT/front"
 
-echo -n "Subiendo el front a $PUBLIC_IP... "
-ssh -T -o StrictHostKeyChecking=no -i "$KEY_PATH" ubuntu@"$PUBLIC_IP" "rm -rf /tmp/front && mkdir /tmp/front"
-scp -q -o StrictHostKeyChecking=no -i "$KEY_PATH" "$FRONT_PATH"/* ubuntu@"$PUBLIC_IP":/tmp/front/
+echo -n "Subiendo el front a $INSTANCE_IP... "
+ssh -T -o StrictHostKeyChecking=no -i "$KEY_PATH" ubuntu@"$INSTANCE_IP" "rm -rf /tmp/front && mkdir /tmp/front"
+scp -q -o StrictHostKeyChecking=no -i "$KEY_PATH" "$FRONT_PATH"/* ubuntu@"$INSTANCE_IP":/tmp/front/
 
-ssh -T -o StrictHostKeyChecking=no -i "$KEY_PATH" ubuntu@"$PUBLIC_IP" << 'ENDSSH'
+ssh -T -o StrictHostKeyChecking=no -i "$KEY_PATH" ubuntu@"$INSTANCE_IP" << 'ENDSSH'
 set -e
 sudo rm -rf /var/www/html/*
 sudo mv /tmp/front/* /var/www/html/
@@ -36,4 +36,4 @@ ENDSSH
 echo "listo."
 
 echo "Despliegue del front finalizado:"
-echo "  http://$PUBLIC_IP/"
+echo "  http://$INSTANCE_IP/"

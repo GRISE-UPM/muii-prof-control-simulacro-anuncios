@@ -30,8 +30,8 @@ huella() {
 # derivar_parametros <EXAM_ID>
 derivar_parametros() {
     EXAM_ID="$1"
-    EXAM_USER="corrector"
-    EXAM_USER_PASS="Corr-$(hash_corto "clave:$1" 8)-A1"
+    EXAM_USER="admin"
+    EXAM_USER_PASS="Adm-$(hash_corto "clave:$1" 8)-A1"
     SECRET_NAME="prod/anuncios/$1"
     DB_PASS="$(hash_corto "secreto:$1" 24)"
     DB_PASS_NUEVA="$(hash_corto "secreto2:$1" 24)"
@@ -75,9 +75,9 @@ ENV
     else
         cat > "$ENTREGA" <<ENTREGA_TXT
 # EXAM_ID lo escribe bash params.sh. Escribe tú a mano la IP.
-# IP      Indica la IP pública de la instancia.
+# INSTANCE_IP   Indica la IP pública de la instancia.
 EXAM_ID=$EXAM_ID
-IP=
+INSTANCE_IP=
 ENTREGA_TXT
     fi
     echo "  entrega.txt .......... EXAM_ID escrito (te falta la IP)"

@@ -6,6 +6,24 @@ Este control es de entrenamiento y no cuenta para la nota final. Sirve para que 
 
 Lo que se evalúa no es que sepas programar la aplicación (viene hecha y no tienes que tocar su código), sino que sepas **configurar la arquitectura** que la hace funcionar en AWS. En concreto, el servidor y su cortafuegos, la identidad con Cognito y los secretos con Secrets Manager.
 
+## Entrega
+
+La entrega es un *pull request* desde la rama `main` de tu *fork* contra la rama `main` del repositorio original (rellena la plantilla). Su fecha y su contenido forman parte de la evidencia.
+
+**Se entregan** (haz *commit* de ellos).
+
+- `entrega.txt`, con `EXAM_ID` e `INSTANCE_IP` correctos (el EXAM_ID lo escribe `params.sh` y la IP la escribes tú).
+- Los ficheros que completes o corrijas en `aws-scripts/` y, si procede, en `back/`.
+
+**No se entregan** (no los subas).
+
+- `params.txt`, que contiene tus parámetros y la contraseña de la base de datos (está en `.gitignore`).
+- La clave SSH del laboratorio (`ssh-key/labsuser.pem` y cualquier `.pem`; también está en `.gitignore`).
+- Los ficheros que generan los scripts (`front/config.js`, `back/src/main/resources/cognito.properties` y `back/target/`), igualmente en `.gitignore`.
+- Ficheros ajenos al control, como los `*:Zone.Identifier` que crea Windows al copiar ficheros o `.DS_Store`.
+
+Las respuestas a las preguntas abiertas **no van en el repositorio**, sino en el cuestionario de Moodle.
+
 ## Cómo se reparten los puntos
 
 La nota máxima es de **12 puntos**: 10 puntos (5 de despliegue y 5 de preguntas) más 2 puntos de dos preguntas adicionales.
@@ -70,7 +88,7 @@ Completa `aws-scripts/ec2.sh`.
 - Desde Internet **solo se debe poder acceder al puerto 80**. El 8080 de Spring Boot y el 443 no deben estar accesibles.
 - Los scripts necesitan SSH para desplegar. El puerto 22 (SSH) **solo debe poder abrirse desde tu IP pública**, con una regla `/32`.
 
-Cuando `ec2.sh` termine, **identifica la IP pública de la instancia** y **escríbela a mano en `entrega.txt`**, en el campo `IP`. El `EXAM_ID` ya lo ha escrito `params.sh` en ese fichero.
+Cuando `ec2.sh` termine, **identifica la IP pública de la instancia** y **escríbela a mano en `entrega.txt`**, en el campo `INSTANCE_IP`. El `EXAM_ID` ya lo ha escrito `params.sh` en ese fichero.
 
 **Checkpoint.** Comprueba que puedes conectarte a la instancia por SSH. Si no recuerdas cómo hacerlo, búscalo en la consola web de EC2.
 
@@ -82,15 +100,15 @@ Ejecuta `nginx.sh`, `back.sh` y `front.sh`, en ese orden. Los tres deberían ter
 
 | Script | Valor | De dónde sale |
 |---|---|---|
-| `nginx.sh` | `PUBLIC_IP` | La IP pública de la instancia, la que escribiste en `entrega.txt` |
-| `back.sh` | `PUBLIC_IP` | La misma IP pública |
+| `nginx.sh` | `INSTANCE_IP` | La IP pública de la instancia, la que escribiste en `entrega.txt` |
+| `back.sh` | `INSTANCE_IP` | La misma IP pública |
 | `back.sh` | `SECRET_NAME` | `params.txt`. Es solo el nombre del secreto, que todavía no existe en esta tarea; la aplicación arranca igualmente |
 | `back.sh` | `EXAM_ID` | `params.txt`. Es el mismo valor que devuelve `/api/whoami` |
-| `front.sh` | `PUBLIC_IP` | La misma IP pública |
+| `front.sh` | `INSTANCE_IP` | La misma IP pública |
 
-**Checkpoint.** Cuando terminen, `http://<PUBLIC_IP>/api/whoami` debe responder un JSON que incluya tu `EXAM_ID`. Si no responde, no sigas: el problema está en esta tarea. `http://<PUBLIC_IP>/` debe mostrar el front.
+**Checkpoint.** Cuando terminen, `http://<INSTANCE_IP>/api/whoami` debe responder un JSON que incluya tu `EXAM_ID`. Si no responde, no sigas: el problema está en esta tarea. `http://<INSTANCE_IP>/` debe mostrar el front.
 
-**Pregunta (0,5 puntos).** ¿Por qué `http://<PUBLIC_IP>/api/whoami` se puede ver sin iniciar sesión, pero `http://<PUBLIC_IP>/api/mensajes` no?
+**Pregunta (0,5 puntos).** ¿Por qué `http://<INSTANCE_IP>/api/whoami` se puede ver sin iniciar sesión, pero `http://<INSTANCE_IP>/api/mensajes` no?
 
 ### Tarea 3. Identidad con Cognito · 0,75 puntos
 
@@ -117,7 +135,7 @@ El script genera `back/src/main/resources/cognito.properties` y `front/config.js
 2. Llama al back con ese token:
 
    ```bash
-   curl -s -H "Authorization: Bearer <TOKEN>" http://<PUBLIC_IP>/api/whoami
+   curl -s -H "Authorization: Bearer <TOKEN>" http://<INSTANCE_IP>/api/whoami
    ```
 
 El campo `usuario` debe mostrar tu usuario. El campo `grupos` seguirá vacío hasta la tarea siguiente. Si no es así, no sigas, porque el problema está en esta tarea:
@@ -125,7 +143,7 @@ El campo `usuario` debe mostrar tu usuario. El campo `grupos` seguirá vacío ha
 - Si `usuario` sale `null`, la llamada no ha llevado un token válido (no te has autenticado). Revisa el paso 1 (que el comando haya devuelto el token y que hayas puesto bien `<CLIENT_ID>`, `<EXAM_USER>` y `<EXAM_USER_PASS>`) y que lo hayas pegado en el paso 2.
 - Si recibes un **401**, el token no es válido para el back. Comprueba que has vuelto a ejecutar `back.sh` tras `cognito.sh`.
 
-**Pregunta (0,5 puntos).** Escribe `http://<PUBLIC_IP>/api/whoami` en la barra de direcciones del navegador. ¿Por qué no sale lo mismo que con el comando `curl` del paso 2?
+**Pregunta (0,5 puntos).** Escribe `http://<INSTANCE_IP>/api/whoami` en la barra de direcciones del navegador. ¿Por qué no sale lo mismo que con el comando `curl` del paso 2?
 
 **Pregunta (1 punto).** Decodifica el contenido del token que acabas de obtener. Cada dato del contenido se llama *claim*. **Pega en Moodle el claim (nombre y valor) que contiene cada uno de estos cuatro datos**: el identificador único de tu usuario en el *pool*, tu nombre de usuario, quién ha emitido el token y qué tipo de token es. No pegues el token original, que es una credencial válida durante una hora.
 
@@ -136,14 +154,14 @@ Ningún script crea el grupo `admin`: hazlo tú en la **consola web de Cognito**
 1. Abre tu *User Pool* (`anuncios-pool`) y crea un grupo llamado exactamente `admin`.
 2. Añade al grupo el usuario del examen.
 
-**Checkpoint.** Pide un *access token* nuevo del usuario del examen (con el mismo comando del *checkpoint* de la Tarea 3) y llama con él a `http://<PUBLIC_IP>/api/whoami`. El campo `grupos` debe mostrar `admin`. Si no es así, no sigas: el problema está en esta tarea. Un token anterior a añadir al usuario al grupo no contiene el claim del grupo.
+**Checkpoint.** Pide un *access token* nuevo del usuario del examen (con el mismo comando del *checkpoint* de la Tarea 3) y llama con él a `http://<INSTANCE_IP>/api/whoami`. El campo `grupos` debe mostrar `admin`. Si no es así, no sigas: el problema está en esta tarea. Un token anterior a añadir al usuario al grupo no contiene el claim del grupo.
 
 **Pregunta (0,75 puntos).** Prueba a publicar un mensaje con este comando, primero con el token de la Tarea 3 (anterior al grupo) y después con el token nuevo. ¿Por qué ahora el `POST` funciona?
 
 ```bash
 curl -s -o /dev/null -w '%{http_code}\n' -X POST \
   -H "Authorization: Bearer <TOKEN>" -H 'Content-Type: application/json' \
-  -d '{"texto":"hola"}' http://<PUBLIC_IP>/api/mensajes
+  -d '{"texto":"hola"}' http://<INSTANCE_IP>/api/mensajes
 ```
 
 ### Tarea 5. Secretos · 0,75 puntos
@@ -158,7 +176,7 @@ Después, vuelve a ejecutar `back.sh` para que el back lea el secreto.
 **Checkpoint.** Calcula la huella de tu contraseña y compárala con la que devuelve la aplicación. Las dos deben ser iguales.
 
 ```bash
-curl -s http://<PUBLIC_IP>/api/whoami
+curl -s http://<INSTANCE_IP>/api/whoami
 
 # En macOS
 printf '%s' "<DB_PASS>" | shasum -a 256
@@ -189,7 +207,7 @@ La contraseña de la base de datos debe pasar a ser `DB_PASS_NUEVA` (la de `para
     La consola H2 forma parte de la aplicación, pero **no está publicada**: Nginx no la sirve y el puerto 8080 no está abierto. Se accede por un túnel SSH, que deja su puerto local 8082 conectado al 8080 de la instancia:
 
     ```bash
-    ssh -i ssh-key/labsuser.pem -L 8082:127.0.0.1:8080 ubuntu@<PUBLIC_IP>
+    ssh -i ssh-key/labsuser.pem -L 8082:127.0.0.1:8080 ubuntu@<INSTANCE_IP>
     ```
 
     Con el túnel abierto, entra en `http://localhost:8082/h2-console` con estos datos de conexión.
@@ -200,11 +218,11 @@ La contraseña de la base de datos debe pasar a ser `DB_PASS_NUEVA` (la de `para
     | Usuario | `admin` |
     | Contraseña | la que tenga ahora la base de datos |
 
-**Pregunta (1 punto).** Después de cambiar la contraseña en el secreto y en la base de datos, consulta `http://<PUBLIC_IP>/api/whoami`. ¿Por qué la `huella` no coincide con la de tu contraseña nueva?
+**Pregunta (1 punto).** Después de cambiar la contraseña en el secreto y en la base de datos, consulta `http://<INSTANCE_IP>/api/whoami`. ¿Por qué la `huella` no coincide con la de tu contraseña nueva?
 
 **Pregunta adicional (+1 punto).** ¿Cómo se puede conseguir que la `huella` sea correcta?
 
-**Checkpoint.** Una vez resuelto el problema anterior, la aplicación debe seguir respondiendo en `http://<PUBLIC_IP>/api/whoami`, y su `huella` debe ser el SHA-256 de tu contraseña nueva, calculado como en el *checkpoint* de la Tarea 5 pero con `<DB_PASS_NUEVA>`.
+**Checkpoint.** Una vez resuelto el problema anterior, la aplicación debe seguir respondiendo en `http://<INSTANCE_IP>/api/whoami`, y su `huella` debe ser el SHA-256 de tu contraseña nueva, calculado como en el *checkpoint* de la Tarea 5 pero con `<DB_PASS_NUEVA>`.
 
 ## Cómo entregar
 
